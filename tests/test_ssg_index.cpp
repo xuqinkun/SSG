@@ -7,14 +7,14 @@
 #include "util.h"
 
 int main(int argc, char** argv) {
-  if (argc < 7) {
-    std::cout << "./run data_file nn_graph_path L R Angle save_graph_file [seed]"
+  if (argc < 8) {
+    std::cout << "./run data_file nn_graph_path L R Angle save_graph_file metric_type [seed]"
               << std::endl;
     exit(-1);
   }
 
-  if (argc == 8) {
-    unsigned seed = (unsigned)atoi(argv[7]);
+  if (argc == 9) {
+    unsigned seed = (unsigned)atoi(argv[8]);
     srand(seed);
     std::cout << "Using Seed " << seed << std::endl;
   }
@@ -23,6 +23,7 @@ int main(int argc, char** argv) {
 
   unsigned points_num, dim;
   float* data_load = nullptr;
+  efanna2e::Metric metric;
   data_load = efanna2e::load_data(argv[1], points_num, dim);
   data_load = efanna2e::data_align(data_load, points_num, dim);
 
@@ -30,14 +31,26 @@ int main(int argc, char** argv) {
   unsigned L = (unsigned)atoi(argv[3]);
   unsigned R = (unsigned)atoi(argv[4]);
   float A = (float)atof(argv[5]);
+  std::string metric_type = argv[7];
 
   std::cout << "L = " << L << ", ";
   std::cout << "R = " << R << ", ";
   std::cout << "Angle = " << A << std::endl;
   std::cout << "KNNG = " << nn_graph_path << std::endl;
+  std::cout << "Metric_type = " << metric_type << std::endl;
+
+  if (!metric_type.compare("L2")) {
+    metric = efanna2e::L2;
+  } else if (!metric_type.compare("HPB")) {
+    metric = efanna2e::HPB;
+  } else {
+    std::cout << "Unknown metric type"
+              << std::endl;
+    exit(-1);
+  }
 
   efanna2e::IndexRandom init_index(dim, points_num);
-  efanna2e::IndexSSG index(dim, points_num, efanna2e::L2,
+  efanna2e::IndexSSG index(dim, points_num, metric,
                            (efanna2e::Index*)(&init_index));
 
   efanna2e::Parameters paras;

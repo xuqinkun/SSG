@@ -20,14 +20,14 @@ void save_result(char* filename, std::vector<std::vector<unsigned> >& results) {
 }
 
 int main(int argc, char** argv) {
-  if (argc < 7) {
-    std::cout << "./run data_file query_file ssg_path L K result_path [seed]"
+  if (argc < 8) {
+    std::cout << "./run data_file query_file ssg_path L K result_path metric_type [seed]"
               << std::endl;
     exit(-1);
   }
 
-  if (argc == 8) {
-    unsigned seed = (unsigned)atoi(argv[7]);
+  if (argc == 9) {
+    unsigned seed = (unsigned)atoi(argv[8]);
     srand(seed);
     std::cerr << "Using Seed " << seed << std::endl;
   }
@@ -36,8 +36,10 @@ int main(int argc, char** argv) {
 
   unsigned points_num, dim;
   float* data_load = nullptr;
+  efanna2e::Metric metric;
   data_load = efanna2e::load_data(argv[1], points_num, dim);
   data_load = efanna2e::data_align(data_load, points_num, dim);
+  std::string metric_type = argv[7];
 
   std::cerr << "Query Path: " << argv[2] << std::endl;
 
@@ -48,8 +50,18 @@ int main(int argc, char** argv) {
 
   assert(dim == query_dim);
 
+  if (!metric_type.compare("L2")) {
+    metric = efanna2e::L2;
+  } else if (!metric_type.compare("HPB")) {
+    metric = efanna2e::HPB;
+  } else {
+    std::cout << "Unknown metric type"
+              << std::endl;
+    exit(-1);
+  }
+
   efanna2e::IndexRandom init_index(dim, points_num);
-  efanna2e::IndexSSG index(dim, points_num, efanna2e::FAST_L2,
+  efanna2e::IndexSSG index(dim, points_num, metric,
                            (efanna2e::Index*)(&init_index));
 
   std::cerr << "SSG Path: " << argv[3] << std::endl;
