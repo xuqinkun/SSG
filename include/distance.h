@@ -376,7 +376,7 @@ class DistanceFastL2 : public DistanceInnerProduct {
       _mm256_storeu_ps(unpack, sum);
       result = unpack[0] + unpack[1] + unpack[2] + unpack[3] + unpack[4] + unpack[5] + unpack[6] + unpack[7];
 #endif
-
+#endif
             return result;
         }
     };
