@@ -7,6 +7,7 @@
 
 #include <x86intrin.h>
 #include <iostream>
+#include <math.h>
 namespace efanna2e {
 enum Metric { L2 = 0, INNER_PRODUCT = 1, FAST_L2 = 2, PQ = 3, HPB = 4 };
 class Distance {
@@ -344,6 +345,7 @@ class DistanceFastL2 : public DistanceInnerProduct {
           float result = 0;
 
 #ifdef __GNUC__
+#ifdef __AVX__
 
   #define AVX_L2SQR(addr1, addr2, dest, tmp1, tmp2) \
       tmp1 = _mm256_loadu_ps(addr1);\
