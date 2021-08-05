@@ -36,12 +36,13 @@ int main(int argc, char** argv) {
 
   unsigned points_num, dim;
   float* data_load = nullptr;
+  std::string metric_type = argv[7];
   efanna2e::Metric metric;
   data_load = efanna2e::load_data(argv[1], points_num, dim);
   data_load = efanna2e::data_align(data_load, points_num, dim);
-  std::string metric_type = argv[7];
 
   std::cerr << "Query Path: " << argv[2] << std::endl;
+  std::cerr << "Metric type: " << metric_type << std::endl;
 
   unsigned query_num, query_dim;
   float* query_load = nullptr;
